@@ -4,19 +4,84 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Location Sharing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    a {
+      text-decoration: none;
+      display: block;
+      margin-bottom: 20px;
+    }
+    .admin-link button {
+      background-color: #28a745;
+    }
+    .admin-link button:hover {
+      background-color: #218838;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-  <h1>Share Your Location</h1>
-  <a href="./Pages/admin.html">
-    <button>go to Admin  page</button>
+  <a class="admin-link" href="./Pages/admin.html">
+    <button>Go to Admin Page</button>
   </a>
-  <form id="locationForm">
-    <label for="userName">Name:</label>
-    <input type="text" id="userName" name="userName" required><br><br>
-    <label for="userMobile">Mobile Number:</label>
-    <input type="text" id="userMobile" name="userMobile" required><br><br>
-    <button type="button" onclick="shareLocation()">Share My Location</button>
-  </form>
+  <div class="container">
+    <h1>Share Your Location</h1>
+    <form id="locationForm">
+      <label for="userName">Name:</label>
+      <input type="text" id="userName" name="userName" required>
+      <label for="userMobile">Mobile Number:</label>
+      <input type="text" id="userMobile" name="userMobile" required>
+      <button type="button" onclick="shareLocation()">Share My Location</button>
+    </form>
+  </div>
 
   <script>
     async function shareLocation() {
@@ -26,22 +91,53 @@
           const userName = document.getElementById('userName').value;
           const userMobile = document.getElementById('userMobile').value;
 
-          const response = await fetch('https://map-6pag.onrender.com/api/share-location', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ userName, userMobile, latitude, longitude })
-          });
+          try {
+            const response = await fetch('https://map-6pag.onrender.com/api/share-location', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ userName, userMobile, latitude, longitude })
+            });
 
-          if (response.ok) {
-            alert('Location shared successfully');
-          } else {
-            alert('Error sharing location');
+            if (response.ok) {
+              Swal.fire({
+                title: 'Success!',
+                text: 'Location shared successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK'
+              });
+            } else {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Error sharing location.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+              });
+            }
+          } catch (error) {
+            Swal.fire({
+              title: 'Error!',
+              text: 'Something went wrong.',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
           }
+        }, (error) => {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to get geolocation.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
         });
       } else {
-        alert('Geolocation is not supported by this browser.');
+        Swal.fire({
+          title: 'Error!',
+          text: 'Geolocation is not supported by this browser.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
       }
     }
   </script>

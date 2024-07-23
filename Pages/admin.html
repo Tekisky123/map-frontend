@@ -5,18 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Location View</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+      margin: 20px;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      margin: 10px;
+    }
     #map {
       height: 500px;
       width: 100%;
+      margin: 20px 0;
+    }
+    #distance {
+      font-size: 18px;
+      margin-top: 10px;
+      color: #333;
+    }
+    a {
+      text-decoration: none;
     }
   </style>
 </head>
 <body>
   <h1>Admin Panel</h1>
-
+  
   <a href="../index.html">
-    <button>go to user location page</button>
+    <button>Go to User Location Page</button>
   </a>
 
   <button onclick="getAdminLocation()">Get Admin's Current Location</button>
@@ -29,6 +76,7 @@
   <p id="distance"></p>
 
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
   <script>
     let map;
     let userMarker;
@@ -65,16 +113,28 @@
 
           document.getElementById('distance').innerText = 'Please get the user location.';
         }, (error) => {
-          alert('Error getting admin location: ' + error.message);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error getting admin location: ' + error.message
+          });
         });
       } else {
-        alert('Geolocation is not supported by this browser.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Geolocation is not supported by this browser.'
+        });
       }
     }
 
     async function getUserLocation() {
       if (!adminLatLng) {
-        alert('Please get the admin location first.');
+        Swal.fire({
+          icon: 'warning',
+          title: 'Warning',
+          text: 'Please get the admin location first.'
+        });
         return;
       }
 
@@ -103,7 +163,11 @@
         const distance = map.distance(adminLatLng, userLatLng); // Distance in meters
         document.getElementById('distance').innerText = `Distance from Admin: ${(distance / 1000).toFixed(2)} km`;
       } else {
-        alert('Error retrieving user location');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error retrieving user location'
+        });
       }
     }
 
