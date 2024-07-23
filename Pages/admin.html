@@ -43,6 +43,7 @@
       border-radius: 5px;
       font-size: 16px;
       margin: 10px;
+      width: 200px;
     }
     #map {
       height: 500px;
@@ -69,7 +70,7 @@
   <button onclick="getAdminLocation()">Get Admin's Current Location</button>
   
   <label for="userMobile">Enter User Mobile Number:</label>
-  <input type="text" id="userMobile" name="userMobile" required>
+  <input type="text" id="userMobile" name="userMobile" maxlength="10" pattern="\d{10}" required>
   <button onclick="getUserLocation()">Get User Location</button>
   
   <div id="map"></div>
@@ -129,6 +130,18 @@
     }
 
     async function getUserLocation() {
+      const userMobile = document.getElementById('userMobile').value;
+
+      // Validate the mobile number
+      if (!/^\d{10}$/.test(userMobile)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Invalid Input',
+          text: 'Please enter a valid 10-digit mobile number.'
+        });
+        return;
+      }
+
       if (!adminLatLng) {
         Swal.fire({
           icon: 'warning',
@@ -138,7 +151,6 @@
         return;
       }
 
-      const userMobile = document.getElementById('userMobile').value;
       const response = await fetch(`https://map-6pag.onrender.com/api/get-location/${userMobile}`);
 
       if (response.ok) {
